@@ -18,14 +18,19 @@ def blobdetection(im, i, file):
     # Setup SimpleBlobDetector parameters.
     params = cv2.SimpleBlobDetector_Params()
 
+    # # Change thresholds, lower minimum for detection of less contrast
+    # params.minThreshold = 100
+    # params.maxThreshold = 200
+
     # Change thresholds, lower minimum for detection of less contrast
-    params.minThreshold = 100
-    params.maxThreshold = 200
+    params.minThreshold = 10
+    params.maxThreshold = 5000
 
     # Filter by Area.
     # 6 seems to be the treshold for chemiluminescence blob in ~3000x4000 px jpg
+    # 100 seems to be the treshold for blob-standards in ~480x480 px jpg
     params.filterByArea = True
-    params.minArea = 100
+    params.minArea = 3000
 
     # Filter by Circularity
     params.filterByCircularity = True
@@ -33,9 +38,11 @@ def blobdetection(im, i, file):
 
     # Filter by Convexity
     params.filterByConvexity = True
-    params.minConvexity = 0.87
+    params.minConvexity = 0.5
     
     # Filter by Inertia
+    # params.filterByInertia = True
+    # params.minInertiaRatio = 0.01
     params.filterByInertia = True
     params.minInertiaRatio = 0.01
 
@@ -65,7 +72,7 @@ def blobdetection(im, i, file):
 # for each jpg file with "cells" in the filename, examine the blobs 
 i = 0
 print(os.getcwd())
-working_directory = (os.path.join(os.getcwd(), "delta_microscope/detection/blob_detection/blobs"))
+working_directory = (os.path.join(os.getcwd(), "spoc-detection/blob_detection/blobs/droplet-examples"))
 #forward slashes for unix compatibility
 print(working_directory)
 #os.chdir(r"C:\Users\Georg\Documents\Python Scripts\delta_bot\detection\blob_detection\blobs")
@@ -76,16 +83,18 @@ os.chdir(working_directory)
 # "chemiluminescence_nr2.jpg"
 # "*chemi*.jpg"
 
-for file in glob.glob("*chemi*.jpg"):
+for file in glob.glob("*.jpg"):
     print(file)
     #im = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
     # take image in 3 color mode
-    im = cv2.imread(file, 3)
-
+    # im = cv2.imread(file, 3)
     # only use the blue component, because chemiluminescence is blue:
     # https://stackoverflow.com/questions/39903809/wrong-color-reading-an-image-with-opencv-python
-    blue,green,red = cv2.split(im)
-    im = blue
+    # blue,green,red = cv2.split(im)
+    # im = blue
+
+    # take image in b/w mode
+    im = cv2.imread(file, 1)
 
     print (blobdetection(im, i, file)) #print the returned number of blobs
     i += 1
